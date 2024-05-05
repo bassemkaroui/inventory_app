@@ -1,0 +1,34 @@
+FROM python:3.10-alpine as base
+
+ENV PYROOT /pyroot
+ENV PYTHONUSERBASE $PYROOT
+
+WORKDIR /opt
+
+# remove "dist" from ".dockerignore" first
+COPY dist/inventory_app-0.1.0-py3-none-any.whl ./inventory_app-0.1.0-py3-none-any.whl
+
+RUN PIP_USER=1 pip install -U pip
+RUN PIP_USER=1 pip install ./inventory_app-0.1.0-py3-none-any.whl
+
+FROM python:3.10-alpine
+
+ENV PYROOT /pyroot
+ENV PYTHONUSERBASE $PYROOT
+ENV PATH $PYROOT/bin:$PATH
+
+WORKDIR /opt
+
+RUN addgroup -S inventory_app \
+    && adduser -S user -G inventory_app -u 1234 \
+    && chown -R user:inventory_app /opt
+
+COPY --chown=user:inventory_app --from=base $PYROOT $PYROOT
+
+USER user
+
+COPY main.py ./
+
+EXPOSE 8080
+
+CMD [ "uvicorn", "main:app", "--port", "8080", "--host", "0.0.0.0"]

@@ -1,0 +1,54 @@
+services:
+  inventory-app:
+    build:
+      context: .
+      # dockerfile: Dockerfile
+      args:
+        - ENVIRONMENT=production
+    ports:
+      - "8000:8080"
+    restart: always
+    depends_on:
+      - postgresdb
+
+  inventory-app-tests:
+    build:
+      context: .
+      # dockerfile: Dockerfile
+      args:
+        - ENVIRONMENT=development
+    stdin_open: true
+    tty: true
+    command: [ "sh" ]
+    volumes:
+      - .:/usr/src/inventory_app
+    depends_on:
+      - postgresdb
+    profiles:
+      - dev
+    
+  postgresdb:
+    image: postgres:16-alpine
+    env_file:
+      - .env/postgres.env
+    restart: always
+    volumes:
+      - postgres_vol:/var/lib/postgresql/data
+
+  pgadmin:
+    image: dpage/pgadmin4:8.5
+    env_file:
+      - .env/pgadmin.env
+    restart: always
+    ports:
+      - "5050:80"
+    volumes:
+      - pgadmin_vol:/var/lib/pgadmin
+    depends_on:
+      - postgresdb
+    profiles:
+      - dev
+
+volumes:
+  postgres_vol: {}
+  pgadmin_vol: {}

@@ -1,0 +1,45 @@
+SHELL := /bin/bash
+
+.ONESHELL:
+
+.DEFAULT_GOAL := help
+
+.PHONY: setup install run tests help
+
+ifeq (,$(wildcard venv/bin/activate))
+    FIRST_RUN := true
+else
+    FIRST_RUN := false
+endif
+
+help:
+	@echo "Available targets:"
+	@echo "  install   : Install dependencies"
+	@echo "  run       : Run the application"
+	@echo "  test      : Run tests"
+	@echo "  help      : Display this help message"
+
+venv/bin/activate:
+	@echo "********** Creating virtual environment... **********"
+	@python3 -m venv venv
+	@echo "**********	Virtual environment created. **********"
+
+setup: venv/bin/activate
+
+install: setup requirements.txt
+ifeq ($(FIRST_RUN),true)
+	@echo "********** Installing requirements... **********"
+	@source venv/bin/activate
+	@pip install -U pip
+	@pip install -r requirements.txt
+	@echo "**********	Requirements installed. **********"
+endif
+
+run: install
+	@echo "********** Running the application... **********"
+	@source venv/bin/activate
+	@python main.py
+
+tests: install
+	@echo "********** Running tests... **********"
+	@pytest

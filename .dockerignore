@@ -1,0 +1,5 @@
+.vscode
+.env
+logs
+http_status_codes.txt
+Dockerfile-wheel
