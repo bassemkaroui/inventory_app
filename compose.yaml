@@ -7,6 +7,8 @@ services:
         - ENVIRONMENT=production
     ports:
       - "8000:8080"
+    env_file:
+      - .env/postgres.env
     restart: always
     depends_on:
       - postgresdb
@@ -17,6 +19,8 @@ services:
       # dockerfile: Dockerfile
       args:
         - ENVIRONMENT=development
+    env_file:
+      - .env/postgres.env
     stdin_open: true
     tty: true
     command: [ "sh" ]

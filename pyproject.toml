@@ -16,7 +16,7 @@ aiohttp = "^3.9.5"
 python-dotenv = "^1.0.1"
 pydantic-settings = "^2.2.1"
 sqlalchemy = "^2.0.29"
-psycopg = {extras = ["binary"], version = "^3.1.18"}
+psycopg2-binary = "^2.9.9"
 
 
 [tool.poetry.group.dev.dependencies]
