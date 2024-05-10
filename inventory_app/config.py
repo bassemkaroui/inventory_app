@@ -22,5 +22,5 @@ class Config(BaseSettings):
 # DB_HOST = f'postgres://{DB_USERNAME}:{DB_PASSWORD}@postgresdb:5432/{DB_NAME}'
 
 if __name__ == '__main__':
-    config = Config()
+    config = Config() # type: ignore
     print(config.host)

@@ -9,11 +9,13 @@ services:
       - "8000:8080"
     env_file:
       - .env/postgres.env
+    volumes:
+      - ./models:/usr/src/inventory_app/models
     restart: always
     depends_on:
       - postgresdb
 
-  inventory-app-tests:
+  inventory-app-dev:
     build:
       context: .
       # dockerfile: Dockerfile

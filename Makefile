@@ -61,7 +61,7 @@ requirements.txt: poetry.lock
 requirements-dev.txt: poetry.lock
 	@poetry export -f requirements.txt --output requirements-dev.txt --with dev
 
-dist: requirements.txt
+dist: requirements.txt requirements-dev.txt
 	@poetry build
 
 .PHONY: wheel

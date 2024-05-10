@@ -1,6 +1,7 @@
 from fastapi import FastAPI, Request
 # from fastapi.responses import JSONResponse, PlainTextResponse
 from typing import Dict, Any
+from models import recreate_tables
 from inventory_app import (
     create_item_router, 
     create_inventory_router, 
@@ -73,5 +74,7 @@ def create_items_inventories():
         }
     }
     return items_contents, inventories_contents
+
+recreate_tables()
 
 app = create_app()
