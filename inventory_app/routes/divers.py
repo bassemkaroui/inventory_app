@@ -15,7 +15,7 @@ def create_divers_router(rate_limiter: Callable) -> APIRouter:
 
     @divers_router.get("/", response_class=RedirectResponse, status_code=status.HTTP_301_MOVED_PERMANENTLY) # default status code is 307 (temporary redirect), 301 is permanent
     def redirect_to_docs():
-        return "/docs"
+        return "/api/v1/docs"
 
 
     @divers_router.get("/main_script", response_class=FileResponse)

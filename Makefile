@@ -21,6 +21,7 @@ help:
 	@echo "  tests_local: Run the tests locally"
 	@echo "  check_typing: Check the typing"
 	@echo "  check_typing_local: Check the typing locally"
+	@echo "  jupyterlab: Run jupyterlab"
 	@echo "  wheel	 : Create a wheel package"
 
 start:
@@ -42,16 +43,19 @@ stop_dev:
 	@docker compose --profile dev down
 
 tests:
-	@docker compose exec -T inventory-app-tests $(TESTS)
+	@docker compose exec -T inventory-app-dev $(TESTS)
 
 tests_local:
 	@$(TESTS)
 
 check_typing:
-	@docker compose exec -T inventory-app-tests mypy .
+	@docker compose exec -T inventory-app-dev mypy .
 
 check_typing_local:
 	@mypy .
+
+jupyterlab:
+	@docker compose exec inventory-app-dev jupyter-lab --NotebookApp.token='' --no-browser --ip=0.0.0.0 --port=8888
 
 #------------------------------------------------------------#
 

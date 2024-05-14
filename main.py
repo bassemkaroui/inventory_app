@@ -15,7 +15,7 @@ RATE_LIMIT_VALUE = "5/30seconds"
 
 # application factory pattern
 def create_app(rate_limit_value: StrOrCallable = RATE_LIMIT_VALUE) -> FastAPI:
-    app = FastAPI()
+    app = FastAPI(root_path="/api/v1")
     rate_limiter = create_rate_limiter(app, rate_limit_value)  
 
     items_contents, inventories_contents = create_items_inventories()

@@ -14,6 +14,7 @@ RUN PIP_USER=1 pip install -U pip
 RUN if [ "$ENVIRONMENT" = "production" ]; then \
     PIP_USER=1 pip install -Ur requirements.txt; \
     elif [ "$ENVIRONMENT" = "development" ]; then \
+    apk add gcc python3-dev musl-dev linux-headers; \
     PIP_USER=1 pip install -Ur requirements-dev.txt; \
     else \
     echo "Invalid environment"; \

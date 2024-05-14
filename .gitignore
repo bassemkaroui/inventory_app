@@ -3,3 +3,6 @@ __pycache__
 **/__pycache__
 *.pyc
 logs/*
+.ipynb_checkpoints
+nginx
+traefik-certificates/*

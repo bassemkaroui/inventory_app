@@ -26,7 +26,7 @@ def create_inventory_router(
         # Fetch the inventory from the database
         # main_inventory = create_inventory(0)
         limit = len(inventories_contents[0]['items_ids'])
-        return RedirectResponse(f"/inventory/0?start=0&limit={limit}", status_code=status.HTTP_301_MOVED_PERMANENTLY)
+        return RedirectResponse(f"/api/v1/inventory/0?start=0&limit={limit}", status_code=status.HTTP_301_MOVED_PERMANENTLY)
 
 
     # Query parameters are used to filter the items (pagination). Request URL will look like this: /inventory/1?start=0&limit=3

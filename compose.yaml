@@ -1,19 +1,71 @@
 services:
+  postgresdb:
+    image: postgres:16-alpine
+    networks:
+      - backend-db
+    env_file:
+      - .env/postgres.env
+    restart: unless-stopped
+    volumes:
+      - postgres_vol:/var/lib/postgresql/data
+
+  traefik:
+    image: traefik:v2.9.6
+    # command:
+    #   - "--api.insecure=true"
+    #   - "--providers.docker=true"
+    #   - "--providers.docker.exposedbydefault=false"
+    #   - "--entrypoints.web.address=:80"
+    #   - "--entrypoints.websecure.address=:443"
+    #   - "--certificatesresolvers.myresolver.acme.tlschallenge=true"
+    #   - "--certificatesresolvers.myresolver.acme.email=bassem.karoui1@gmail.com"
+    #   - "--certificatesresolvers.myresolver.acme.storage=/acme.json"
+    networks:
+      - frontend
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - "/var/run/docker.sock:/var/run/docker.sock:ro"
+      - "./traefik-certificates:/certificates"
+      - "./traefik.toml:/etc/traefik/traefik.toml"
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.dashboard.rule=Host(`homelab-bk.fr.to`) && PathPrefix(`/dashboard`)"
+      - "traefik.http.routers.dashboard.tls=true"
+      - "traefik.http.routers.dashboard.tls.certresolver=letsencrypt"
+      - "traefik.http.routers.dashboard.service=api@internal"
+      - "traefik.http.routers.dashboard-secure.middlewares=auth"
+      - "traefik.http.middlewares.auth.basicauth.users=bassemkaroui:$$2y$$05$$SYHZI81dTmi2ACN7HQopKulXsD83NHn4KhxFeRmFeNEFsyKLTfscu"
+
+
   inventory-app:
     build:
       context: .
       # dockerfile: Dockerfile
       args:
         - ENVIRONMENT=production
-    ports:
-      - "8000:8080"
+    networks:
+      - backend-db
+      - frontend
     env_file:
       - .env/postgres.env
     volumes:
       - ./models:/usr/src/inventory_app/models
-    restart: always
+    restart: unless-stopped
     depends_on:
       - postgresdb
+    scale: 2
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.inventory-api.rule=Host(`homelab-bk.fr.to`) && PathPrefix(`/api/v1`)"
+      - "traefik.http.routers.inventory-api.tls=true"
+      - "traefik.http.routers.inventory-api.tls.certresolver=letsencrypt"
+      - "traefik.http.routers.inventory-api.service=inventory-api"
+      - "traefik.http.services.inventory-api.loadbalancer.server.port=8080"
+      - "traefik.docker.network=frontend" # needed for the reverse proxy to work since the container is in 2 networks
+      # - "traefik.http.services.inventory-api.loadbalancer.server.sticky.cookie=true"
+      # - "traefik.http.services.inventory-api.loadbalancer.server.sticky.cookie.name=inventory-api-cookie"
 
   inventory-app-dev:
     build:
@@ -21,8 +73,12 @@ services:
       # dockerfile: Dockerfile
       args:
         - ENVIRONMENT=development
+    networks:
+      - backend-db
     env_file:
       - .env/postgres.env
+    ports:
+      - "9999:8888"
     stdin_open: true
     tty: true
     command: [ "sh" ]
@@ -32,29 +88,40 @@ services:
       - postgresdb
     profiles:
       - dev
-    
-  postgresdb:
-    image: postgres:16-alpine
-    env_file:
-      - .env/postgres.env
-    restart: always
-    volumes:
-      - postgres_vol:/var/lib/postgresql/data
 
   pgadmin:
     image: dpage/pgadmin4:8.5
+    networks:
+      - backend-db
+      - frontend
     env_file:
       - .env/pgadmin.env
-    restart: always
-    ports:
-      - "5050:80"
+    restart: unless-stopped
     volumes:
       - pgadmin_vol:/var/lib/pgadmin
     depends_on:
       - postgresdb
     profiles:
       - dev
+    environment:
+      SCRIPT_NAME: /pgadmin # needed for the reverse proxy to work
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.pgadmin.rule=Host(`homelab-bk.fr.to`) && PathPrefix(`/pgadmin`)"
+      - "traefik.http.routers.pgadmin.tls=true"
+      - "traefik.http.routers.pgadmin.tls.certresolver=letsencrypt"
+      - "traefik.http.routers.pgadmin.service=pgadmin"
+      - "traefik.http.services.pgadmin.loadbalancer.server.port=80"
+      - "traefik.docker.network=frontend"
+      # - "traefik.http.middlewares.pgadmin-rewrite.addprefix.prefix=/"
+      # - "traefik.http.routers.pgadmin.middlewares=pgadmin-rewrite"
 
 volumes:
   postgres_vol: {}
   pgadmin_vol: {}
+
+networks:
+  frontend:
+    name: frontend # needed for the reverse proxy to work because traefik is expecting a network named "frontend" not "<project_name>_frontend"
+  backend-db:
+    name: backend-db
