@@ -7,6 +7,7 @@ class Item(BaseModel):
     price: float = Field(gt=0, lt=100_000)
     description: str = Field(max_length=250)
 
+
 class PatchItem(BaseModel):
     name: Optional[str] = None
     price: float = Field(gt=0, lt=100_000, default=None)

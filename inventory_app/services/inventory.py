@@ -5,13 +5,12 @@ from ..schemas.inventory import Inventory
 
 class InventoryService:
     def __init__(
-            self, 
-            items_contents: Dict[str, Dict[str, Any]], 
-            inventories_contents: Dict[int, Dict[str, Any]]
-        ) -> None:
+        self,
+        items_contents: Dict[str, Dict[str, Any]],
+        inventories_contents: Dict[int, Dict[str, Any]]
+    ) -> None:
         self.items_contents = items_contents
         self.inventories_contents = inventories_contents
-
 
     async def get_inventory(self, inventory_id: int) -> Inventory:
         inventory = Inventory(
@@ -20,13 +19,12 @@ class InventoryService:
         )
         return inventory
 
-
     async def get_items_with_pagination(self, inventory_id: int, start: int, limit: int) -> Tuple[List[Item], int]:
         inventory = await self.get_inventory(inventory_id)
         filtered_items_ids = inventory.items_ids[start:start+limit]
-        items = [Item(**self.items_contents[item_id]) for item_id in filtered_items_ids]
+        items = [Item(**self.items_contents[item_id])
+                 for item_id in filtered_items_ids]
         return items, len(inventory.items_ids)
-
 
     async def add_item_to_inventory_db(self, inventory_id: int, item: Item) -> Tuple[str, str]:
         if item.name:
