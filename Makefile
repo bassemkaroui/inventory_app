@@ -4,7 +4,7 @@ SHELL := /bin/bash
 
 .DEFAULT_GOAL := help
 
-.PHONY: help start start_build stop tests tests_local check_typing check_typing_local
+.PHONY: help start start_build start_dev start_build_dev stop tests tests_local check_typing check_typing_local
 
 TESTS = pytest tests/* -vv
 
@@ -24,17 +24,26 @@ help:
 	@echo "  jupyterlab: Run jupyterlab"
 	@echo "  wheel	 : Create a wheel package"
 
+.PHONY: .env
+.env:
+	@source .db-env/dbui.env
+	@sed -i -E "s#DB_UI_inventory_db=.*#DB_UI_inventory_db=$$DB_UI_inventory_db#g" .env
+
 start:
 	@docker compose up -d
+	$(MAKE) .env
 
 start_dev:
 	@docker compose --profile dev up -d
+	$(MAKE) .env
 
 start_build:
 	@docker compose up -d --build
+	$(MAKE) .env
 
 start_build_dev:
 	@docker compose --profile dev up -d --build
+	$(MAKE) .env
 
 stop:
 	@docker compose down

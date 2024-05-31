@@ -4,7 +4,7 @@ services:
     networks:
       - backend-db
     env_file:
-      - .env/postgres.env
+      - .db-env/postgres.env
     restart: unless-stopped
     volumes:
       - postgres_vol:/var/lib/postgresql/data
@@ -49,13 +49,13 @@ services:
       - backend-db
       - frontend
     env_file:
-      - .env/postgres.env
+      - .db-env/postgres.env
     volumes:
       - ./models:/usr/src/inventory_app/models
     restart: unless-stopped
     depends_on:
       - postgresdb
-    scale: 2
+    scale: $APP_SCALE
     labels:
       - "traefik.enable=true"
       - "traefik.http.routers.inventory-api.rule=Host(`homelab-bk.fr.to`) && PathPrefix(`/api/v1`)"
@@ -76,7 +76,7 @@ services:
     networks:
       - backend-db
     env_file:
-      - .env/postgres.env
+      - .db-env/postgres.env
     ports:
       - "9999:8888"
     stdin_open: true
@@ -95,7 +95,7 @@ services:
       - backend-db
       - frontend
     env_file:
-      - .env/pgadmin.env
+      - .db-env/pgadmin.env
     restart: unless-stopped
     volumes:
       - pgadmin_vol:/var/lib/pgadmin
