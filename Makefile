@@ -7,6 +7,7 @@ SHELL := /bin/bash
 .PHONY: help start start_build start_dev start_build_dev stop tests tests_local check_typing check_typing_local
 
 TESTS = pytest tests/* -vv
+CHECK_LINT=/bin/sh -c "mypy . && isort --check-only . && black --check . && flake8 inventory_app models tests main.py"
 
 help:
 	@echo "Available targets:"
@@ -57,11 +58,18 @@ tests:
 tests_local:
 	@$(TESTS)
 
-check_typing:
-	@docker compose exec -T inventory-app-dev mypy .
+check_lint:
+	@docker compose exec inventory-app-dev mypy .
+	@docker compose exec inventory-app-dev isort --check-only .
+	@docker compose exec inventory-app-dev black --check .
+	@docker compose exec inventory-app-dev flake8 inventory_app models tests main.py
 
-check_typing_local:
-	@mypy .
+check_lint_local:
+	mypy . && isort --check-only . && black --check . && flake8 inventory_app models tests main.py
+
+fix_lint:
+	@docker compose exec inventory-app-dev isort .
+	@docker compose exec inventory-app-dev black .
 
 jupyterlab:
 	@docker compose exec inventory-app-dev jupyter-lab --NotebookApp.token='' --no-browser --ip=0.0.0.0 --port=8888

@@ -1,6 +1,7 @@
-from typing import Dict, Any, Union
+from typing import Any, Dict, Union
+
+from ..exceptions import ItemAlreadyExists, ItemNotFound
 from ..schemas.item import Item, PatchItem
-from ..exceptions import ItemNotFound, ItemAlreadyExists
 
 
 class ItemService:
@@ -14,7 +15,7 @@ class ItemService:
 
     async def create_item(self, item: Item) -> Union[str, None]:
         if item.name:
-            item_id = item.name.replace(' ', '').lower()
+            item_id = item.name.replace(" ", "").lower()
         if item_id in self.items_contents:
             raise ItemAlreadyExists(item_id)
         self.items_contents[item_id] = item.model_dump()

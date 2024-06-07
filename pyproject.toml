@@ -30,6 +30,10 @@ aioresponses = "^0.7.6"
 types-requests = "^2.31.0.20240406"
 alembic = "^1.13.1"
 jupyterlab = "^4.2.0"
+isort = "^5.13.2"
+black = "^24.4.2"
+flake8 = "^7.0.0"
+pre-commit = "^3.7.1"
 
 [build-system]
 requires = ["poetry-core"]

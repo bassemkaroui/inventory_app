@@ -1,16 +1,17 @@
 from pathlib import Path
-from dotenv import load_dotenv
-from pydantic_settings import BaseSettings, SettingsConfigDict
-from pydantic import PostgresDsn
 
-env_path = Path('.env/postgres.env')
+# from dotenv import load_dotenv
+from pydantic import PostgresDsn
+from pydantic_settings import BaseSettings, SettingsConfigDict
+
+env_path = Path(".env/postgres.env")
+
+
 class Config(BaseSettings):
     host: PostgresDsn
 
     model_config = SettingsConfigDict(
-        env_prefix='postgres_', 
-        env_file=env_path,
-        extra='ignore'
+        env_prefix="postgres_", env_file=env_path, extra="ignore"
     )
 
 
@@ -21,6 +22,6 @@ class Config(BaseSettings):
 # DB_PASSWORD = os.getenv('POSTGRES_PASSWORD')
 # DB_HOST = f'postgres://{DB_USERNAME}:{DB_PASSWORD}@postgresdb:5432/{DB_NAME}'
 
-if __name__ == '__main__':
-    config = Config() # type: ignore
+if __name__ == "__main__":
+    config = Config()  # type: ignore
     print(config.host)
