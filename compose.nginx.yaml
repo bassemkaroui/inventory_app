@@ -6,7 +6,7 @@ services:
     restart: unless-stopped
     volumes:
       - postgres_vol:/var/lib/postgresql/data
-  
+
   nginx:
     container_name: nginx
     image: nginxproxy/nginx-proxy
