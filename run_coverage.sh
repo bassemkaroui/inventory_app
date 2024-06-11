@@ -11,4 +11,3 @@ pytest --cov=sample_requests tests/
 
 # Generate coverage report
 coverage report -m
-
