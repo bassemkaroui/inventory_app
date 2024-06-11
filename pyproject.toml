@@ -35,6 +35,11 @@ black = "^24.4.2"
 flake8 = "^7.0.0"
 pre-commit = "^3.7.1"
 
+# [tool.poetry.scripts]
+# # the entry point for the command 'inventory-app' = the 'main' function in the file
+# # 'main.py' inside the package 'inventory_app'
+# inventory-app = "inventory_app.main:main"
+
 [build-system]
 requires = ["poetry-core"]
 build-backend = "poetry.core.masonry.api"
