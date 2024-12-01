@@ -6,3 +6,4 @@ logs/*
 .ipynb_checkpoints
 nginx
 traefik-certificates/*
+**/.dmypy.json

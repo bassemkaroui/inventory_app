@@ -6,13 +6,13 @@ on:
     branches: [master, main]
 
 jobs:
-  build:
+  pre-commit:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repo
         uses: actions/checkout@v4
       - name: Install poetry
-        run: pipx install poetry
+        run: PIPX_BIN_DIR=/usr/bin pipx install poetry
       - uses: actions/setup-python@v5
         with:
           python-version: '3.10'
